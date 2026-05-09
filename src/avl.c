@@ -8,16 +8,19 @@ int max(int a, int b)
   return (a > b) ? a : b;
 }
 
-int altura(Avl *n)
+static int altura(AVL *n)
 {
   if (n == NULL)
     return 0;
   return n->altura;
 }
 
-Avl *criarAvl(int valor)
+static AVL *criarAVL(int valor)
 {
-  Avl *alvo = (Avl *)malloc(sizeof(Avl));
+  AVL *alvo = (AVL *)malloc(sizeof(AVL));
+
+  if (alvo == NULL)
+    return NULL;
 
   alvo->valor = valor;
   alvo->altura = 1;
@@ -27,7 +30,7 @@ Avl *criarAvl(int valor)
   return alvo;
 }
 
-int calcularBalanceamento(Avl *n)
+static int calcularBalanceamento(AVL *n)
 {
   if (n == NULL)
     return 0;
@@ -36,13 +39,13 @@ int calcularBalanceamento(Avl *n)
 }
 
 /*
-   ROTAÇÕES Avl
+   ROTAÇÕES AVL
 */
 
-Avl *rotacaoDireita(Avl *y)
+static AVL *rotacaoDireita(AVL *y)
 {
-  Avl *x = y->esq;
-  Avl *T2 = x->dir;
+  AVL *x = y->esq;
+  AVL *T2 = x->dir;
 
   x->dir = y;
   y->esq = T2;
@@ -53,10 +56,10 @@ Avl *rotacaoDireita(Avl *y)
   return x;
 }
 
-Avl *rotacaoEsquerda(Avl *x)
+static AVL *rotacaoEsquerda(AVL *x)
 {
-  Avl *y = x->dir;
-  Avl *T2 = y->esq;
+  AVL *y = x->dir;
+  AVL *T2 = y->esq;
 
   y->esq = x;
   x->dir = T2;
@@ -68,60 +71,60 @@ Avl *rotacaoEsquerda(Avl *x)
 }
 
 /*
-   INSERÇÃO Avl
+   INSERÇÃO AVL
 */
 
-Avl *inserir(Avl *Avl, int valor)
+AVL *inserir(AVL *raiz, int valor)
 {
 
-  if (Avl == NULL)
-    return criarAvl(valor);
+  if (raiz == NULL)
+    return criarAVL(valor);
 
-  if (valor < Avl->valor)
-    Avl->esq = inserir(Avl->esq, valor);
+  if (valor < raiz->valor)
+    raiz->esq = inserir(raiz->esq, valor);
 
-  else if (valor > Avl->valor)
-    Avl->dir = inserir(Avl->dir, valor);
+  else if (valor > raiz->valor)
+    raiz->dir = inserir(raiz->dir, valor);
 
   else
-    return Avl;
+    return raiz;
 
-  Avl->altura = 1 + max(altura(Avl->esq), altura(Avl->dir));
+  raiz->altura = 1 + max(altura(raiz->esq), altura(raiz->dir));
 
-  int cb = calcularBalanceamento(Avl);
+  int cb = calcularBalanceamento(raiz);
 
-  // Caso LL
-  if (cb > 1 && valor < Avl->esq->valor)
-    return rotacaoDireita(Avl);
+  // Rtoação simples à direita
+  if (cb > 1 && valor < raiz->esq->valor)
+    return rotacaoDireita(raiz);
 
-  // Caso RR
-  if (cb < -1 && valor > Avl->dir->valor)
-    return rotacaoEsquerda(Avl);
+  // Rotação simples à esquerda
+  if (cb < -1 && valor > raiz->dir->valor)
+    return rotacaoEsquerda(raiz);
 
-  // Caso LR
-  if (cb > 1 && valor > Avl->esq->valor)
+  // Rotação dupla à direita
+  if (cb > 1 && valor > raiz->esq->valor)
   {
-    Avl->esq = rotacaoEsquerda(Avl->esq);
-    return rotacaoDireita(Avl);
+    raiz->esq = rotacaoEsquerda(raiz->esq);
+    return rotacaoDireita(raiz);
   }
 
-  // Caso RL
-  if (cb < -1 && valor < Avl->dir->valor)
+  // Rotação dupla à esquerda
+  if (cb < -1 && valor < raiz->dir->valor)
   {
-    Avl->dir = rotacaoDireita(Avl->dir);
-    return rotacaoEsquerda(Avl);
+    raiz->dir = rotacaoDireita(raiz->dir);
+    return rotacaoEsquerda(raiz);
   }
 
-  return Avl;
+  return raiz;
 }
 
 /*
-   MEAvlR VALOR
+   MENOR VALOR
 */
 
-Avl *menorValor(Avl *Avl)
+static AVL *menorValor(AVL *raiz)
 {
-  Avl *atual = Avl;
+  AVL *atual = raiz;
 
   while (atual->esq != NULL)
     atual = atual->esq;
@@ -130,10 +133,10 @@ Avl *menorValor(Avl *Avl)
 }
 
 /*
-   REMOÇÃO Avl
+   REMOÇÃO AVL
 */
 
-Avl *remover(Avl *raiz, int valor)
+AVL *remover(AVL *raiz, int valor)
 {
 
   if (raiz == NULL)
@@ -151,7 +154,7 @@ Avl *remover(Avl *raiz, int valor)
     if ((raiz->esq == NULL) || (raiz->dir == NULL))
     {
 
-      Avl *temp = raiz->esq ? raiz->esq : raiz->dir;
+      AVL *temp = raiz->esq ? raiz->esq : raiz->dir;
 
       if (temp == NULL)
       {
@@ -168,7 +171,7 @@ Avl *remover(Avl *raiz, int valor)
     else
     {
 
-      Avl *temp = menorValor(raiz->dir);
+      AVL *temp = menorValor(raiz->dir);
 
       raiz->valor = temp->valor;
 
@@ -212,7 +215,7 @@ Avl *remover(Avl *raiz, int valor)
    PROCURA
 */
 
-Avl *procurar(Avl *raiz, int valor)
+AVL *procurar(AVL *raiz, int valor)
 {
 
   if (raiz == NULL || raiz->valor == valor)
@@ -228,7 +231,7 @@ Avl *procurar(Avl *raiz, int valor)
    PRÉ-ORDEM
 */
 
-void preOrdem(Avl *raiz)
+void preOrdem(AVL *raiz)
 {
 
   if (raiz != NULL)
@@ -243,7 +246,7 @@ void preOrdem(Avl *raiz)
    DISTÂNCIA ENTRE NÓS
 */
 
-Avl *LCA(Avl *raiz, int a, int b)
+static AVL *LCA(AVL *raiz, int a, int b)
 {
 
   if (raiz == NULL)
@@ -258,25 +261,35 @@ Avl *LCA(Avl *raiz, int a, int b)
   return raiz;
 }
 
-int distanciaDaRaiz(Avl *raiz, int valor)
+static int distanciaDaRaiz(AVL *raiz, int valor)
 {
+
+  if (raiz == NULL)
+    return -1;
 
   if (raiz->valor == valor)
     return 0;
 
-  if (valor < raiz->valor)
-    return 1 + distanciaDaRaiz(raiz->esq, valor);
+  int sub;
 
-  return 1 + distanciaDaRaiz(raiz->dir, valor);
+  if (valor < raiz->valor)
+    sub = distanciaDaRaiz(raiz->esq, valor);
+  else
+    sub = distanciaDaRaiz(raiz->dir, valor);
+
+  if (sub == -1)
+    return -1;
+
+  return 1 + sub;
 }
 
-int distanciaEntreNos(Avl *raiz, int a, int b)
+int distanciaEntreNos(AVL *raiz, int a, int b)
 {
 
   if (procurar(raiz, a) == NULL || procurar(raiz, b) == NULL)
     return -1;
 
-  Avl *lca = LCA(raiz, a, b);
+  AVL *lca = LCA(raiz, a, b);
 
   int d1 = distanciaDaRaiz(lca, a);
   int d2 = distanciaDaRaiz(lca, b);
@@ -288,7 +301,7 @@ int distanciaEntreNos(Avl *raiz, int a, int b)
    LIBERTAR MEMÓRIA
 */
 
-void liberar(Avl *raiz)
+void liberar(AVL *raiz)
 {
 
   if (raiz != NULL)

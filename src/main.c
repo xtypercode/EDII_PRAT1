@@ -21,7 +21,11 @@ int main()
     printf("0. Sair\n");
 
     printf("Opcao: ");
-    scanf("%d", &opcao);
+    if (scanf("%d", &opcao) != 1)
+    {
+      printf("Entrada invalida. Encerrando...\n");
+      break;
+    }
 
     switch (opcao)
     {
@@ -29,7 +33,11 @@ int main()
     case 1:
 
       printf("Valor a inserir: ");
-      scanf("%d", &valor);
+      if (scanf("%d", &valor) != 1)
+      {
+        printf("Valor invalido!\n");
+        break;
+      }
 
       raiz = inserir(raiz, valor);
 
@@ -38,7 +46,11 @@ int main()
     case 2:
 
       printf("Valor a remover: ");
-      scanf("%d", &valor);
+      if (scanf("%d", &valor) != 1)
+      {
+        printf("Valor invalido!\n");
+        break;
+      }
 
       raiz = remover(raiz, valor);
 
@@ -47,7 +59,11 @@ int main()
     case 3:
 
       printf("Valor a procurar: ");
-      scanf("%d", &valor);
+      if (scanf("%d", &valor) != 1)
+      {
+        printf("Valor invalido!\n");
+        break;
+      }
 
       if (procurar(raiz, valor))
         printf("Valor encontrado!\n");
@@ -65,14 +81,23 @@ int main()
       break;
 
     case 5:
+    {
+      int dist;
 
       printf("Primeiro no: ");
-      scanf("%d", &a);
+      if (scanf("%d", &a) != 1)
+      {
+        printf("Valor invalido!\n");
+        break;
+      }
 
       printf("Segundo no: ");
-      scanf("%d", &b);
+      if (scanf("%d", &b) != 1)
+      {
+        printf("Valor invalido!\n");
+        break;
+      }
 
-      int dist;
       dist = distanciaEntreNos(raiz, a, b);
 
       if (dist == -1)
@@ -81,6 +106,7 @@ int main()
         printf("Distancia entre %d e %d = %d\n", a, b, dist);
 
       break;
+    }
 
     case 0:
 
